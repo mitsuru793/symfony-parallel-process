@@ -1,19 +1,19 @@
 <?php
+declare(strict_types=1);
+
 namespace Jack\Symfony;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Process\PhpProcess;
 use Symfony\Component\Process\Process;
 
-class ProcessManagerTest extends \PHPUnit_Framework_TestCase
+final class ProcessManagerTest extends TestCase
 {
     /**
      * @var ProcessManager
      */
     protected $processManager;
 
-    /**
-     *
-     */
     public function setUp()
     {
         $this->processManager = new ProcessManager();
@@ -24,7 +24,7 @@ class ProcessManagerTest extends \PHPUnit_Framework_TestCase
      */
     public function testRunParallelWithZeroProcesses()
     {
-        $this->processManager->runParallel(array(), 0);
+        $this->processManager->runParallel([], 0);
     }
 
     /**
@@ -32,19 +32,16 @@ class ProcessManagerTest extends \PHPUnit_Framework_TestCase
      */
     public function testRunParallelWithNonSymfonyProcess()
     {
-        $this->processManager->runParallel(array('ls -la'), 0);
+        $this->processManager->runParallel(['ls -la'], 0);
     }
 
-    /**
-     *
-     */
     public function testRunParallel()
     {
-        $processes = array(
+        $processes = [
             new Process('echo foo'),
             new Process('echo bar'),
             new PhpProcess('<?php echo \'Hello World\'; ?>'),
-        );
+        ];
         $this->processManager->runParallel($processes, 2, 1000);
 
         $this->assertEquals('foo' . PHP_EOL, $processes[0]->getOutput());

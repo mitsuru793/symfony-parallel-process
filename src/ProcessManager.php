@@ -1,19 +1,23 @@
 <?php
+declare(strict_types=1);
+
 namespace Jack\Symfony;
 
+use InvalidArgumentException;
 use Symfony\Component\Process\Process;
 
 /**
  * This ProcessManager is a simple wrapper to enable parallel processing using Symfony Process component.
  */
-class ProcessManager
+final class ProcessManager
 {
     /**
      * @param Process[] $processes
      * @param int $maxParallel
      * @param int $poll
+     * @throws InvalidArgumentException
      */
-    public function runParallel(array $processes, $maxParallel, $poll = 1000)
+    public function runParallel(array $processes, int $maxParallel, int $poll = 1000): void
     {
         $this->validateProcesses($processes);
 
@@ -55,16 +59,17 @@ class ProcessManager
 
     /**
      * @param Process[] $processes
+     * @throws InvalidArgumentException
      */
-    protected function validateProcesses(array $processes)
+    protected function validateProcesses(array $processes): void
     {
         if (empty($processes)) {
-            throw new \InvalidArgumentException('Can not run in parallel 0 commands');
+            throw new InvalidArgumentException('Can not run in parallel 0 commands');
         }
 
         foreach ($processes as $process) {
             if (!($process instanceof Process)) {
-                throw new \InvalidArgumentException('Process in array need to be instance of Symfony Process');
+                throw new InvalidArgumentException('Process in array need to be instance of Symfony Process');
             }
         }
     }
