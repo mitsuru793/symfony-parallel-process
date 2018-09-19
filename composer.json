@@ -1,5 +1,5 @@
 {
-    "name": "jagandecapri/symfony-parallel-process",
+    "name": "mitsuru793/symfony-parallel-process",
     "type": "library",
     "description": "Simple wrapper to enable parallel processing using Symfony Process component",
     "keywords": [
