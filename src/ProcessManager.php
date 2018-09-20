@@ -15,9 +15,13 @@ final class ProcessManager
      * @param Process[] $processes
      * @param int $maxParallel
      * @param int $poll
+     * @param callable $callback Callablle which takes 3 arguments:
+     *                            - type of output (out or err)
+     *                            - some bytes from the output in real-time
+     *                            - the process itself being ran
      * @throws InvalidArgumentException
      */
-    public function runParallel(array $processes, int $maxParallel, int $poll = 1000): void
+    public function runParallel(array $processes, int $maxParallel, int $poll = 1000, callable $callback = null): void
     {
         $this->validateProcesses($processes);
 
@@ -33,7 +37,11 @@ final class ProcessManager
 
         // start the initial stack of processes
         foreach ($currentProcesses as $process) {
-            $process->start();
+            $process->start(function ($type, $buffer) use ($callback, $process) {
+                if (null !== $callback && is_callable($callback)) {
+                    $callback($type, $buffer, $process);
+                }
+            });
         }
 
         do {
@@ -48,7 +56,11 @@ final class ProcessManager
                     // directly add and start new process after the previous finished
                     if (count($processesQueue) > 0) {
                         $nextProcess = array_shift($processesQueue);
-                        $nextProcess->start();
+                        $nextProcess->start(function ($type, $buffer) use ($callback, $nextProcess) {
+                            if (null !== $callback && is_callable($callback)) {
+                                $callback($type, $buffer, $nextProcess);
+                            }
+                        });
                         $currentProcesses[] = $nextProcess;
                     }
                 }

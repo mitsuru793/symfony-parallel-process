@@ -24,5 +24,16 @@ array_push($processes, $proc1, $proc2);
 
 $maxParallelProcesses = 5;
 $pollingInterval = 1000; // microseconds
-$procManager->runParallel($processes, $maxParallelProcesses, $pollingInterval);
+$callback = function (string $type, string $data, Process $process) {
+    // do streaming
+};
+$procManager->runParallel($processes, $maxParallelProcesses, $pollingInterval, $callback);
 ```
+
+## Thank you very much
+
+Fork:  
+https://github.com/jagandecapri/symfony-parallel-process
+
+Callback argument of runParallel:   
+https://github.com/chubidu/symfony-parallel-process
